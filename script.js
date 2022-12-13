@@ -1,83 +1,65 @@
-$(document).ready(function(){
-    $(window).scroll(function(){
-    
-        // scroll-up button show/hide script
-        if(this.scrollY > 500){
-            $('.scroll-up-btn').addClass("show");
-        }else{
-            $('.scroll-up-btn').removeClass("show");
-        }
-    });
+const navMenu = document.getElementById("nav-menu");
+const toggleMenu = document.getElementById("toggle-menu");
+const closeMenu = document.getElementById("close-menu");
+const navitem = document.querySelectorAll(".nav-item");
+const allSections = document.querySelectorAll(".section");
+const modal = document.querySelector(".modal");
+const overlay = document.querySelector(".overlay");
+const btnCloseForm = document.querySelector(".btn-close-form");
+const btnOpenForm = document.querySelector(".btn-open-form");
 
-    // slide-up script
-    $('.scroll-up-btn').click(function(){
-        $('html').animate({scrollTop: 0});
-        // removing smooth scroll on slide-up button click
-        $('html').css("scrollBehavior", "auto");
-    });
-
-    $('.navbar .menu li a').click(function(){
-        // applying again smooth scroll on menu items click
-        $('html').css("scrollBehavior", "smooth");
-    });
-
-    // toggle menu/navbar script
-    $('.menu-btn').click(function(){
-        $('.navbar .menu').toggleClass("active");
-        $('.menu-btn i').toggleClass("active");
-    });
-    // typing text animation script
-    var typed = new Typed(".typing", {
-        strings: ["Website Design and Developer"],
-        typeSpeed: 100,
-        backSpeed: 60,
-        loop: true
-    });
-
-    var typed = new Typed(".typing-2", {
-        strings: ["Everyone!"],
-        typeSpeed: 100,
-        backSpeed: 60,
-        loop: true
-    });
-    
-    // owl carousel script
-    $('.carousel').owlCarousel({
-        margin: 20,
-        loop: true,
-        autoplayTimeOut: 2000,
-        autoplayHoverPause: true,
-        responsive: {
-            0:{
-                items: 1,
-                nav: false
-            },
-            600:{
-                items: 2,
-                nav: false
-            },
-            1000:{
-                items: 3,
-                nav: false
-            }
-        }
-    });
+toggleMenu.addEventListener("click", () => {
+  navMenu.classList.toggle("show");
 });
-$(document).ready(function(){
-    $(window).scroll(function(){
-        var scroll = $(window).scrollTop();
-        if (scroll > 700) {
-            $("nav").css("top" , "0px");
-            $("nav").css("opacity" , "1");
-        } else {
-            $("nav").css("top" , "-35px");
-        }
-        dh = $(document).height();
-        wh = $(window).height();
-        var height = (scroll / (dh-wh)) * 60;
-        var top = 50 - (scroll / (dh-wh)) * 30;
-        $(".scrollBar").css("height" , height + "vh");
-        $(".scrollBar").css("top" , top + "vh");
-    })
-})
 
+closeMenu.addEventListener("click", () => {
+  navMenu.classList.remove("show");
+});
+
+navitem.forEach((link) =>
+  link.addEventListener("click", function () {
+    navMenu.classList.remove("show");
+  })
+);
+
+// Scroll Transition ----
+const revealSection = function (entries, observer) {
+  const [entry] = entries;
+
+  if (!entry.isIntersecting) return;
+  entry.target.classList.remove("section--hidden");
+  observer.unobserve(entry.target);
+};
+
+const sectionObserver = new IntersectionObserver(revealSection, {
+  root: null,
+  threshold: 0.15,
+});
+
+allSections.forEach(function (section) {
+  sectionObserver.observe(section);
+  section.classList.add("section--hidden");
+});
+
+// Form -------
+const openModal = function (e) {
+  e.preventDefault();
+  modal.classList.remove('hidden');
+  overlay.classList.remove('hidden');
+};
+
+const closeModal = function () {
+  modal.classList.add('hidden');
+  overlay.classList.add('hidden');
+};
+
+btnOpenForm.addEventListener('click', openModal);
+
+btnCloseForm.addEventListener('click', closeModal);
+overlay.addEventListener('click', closeModal);
+
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+    closeModal();
+  }
+});
